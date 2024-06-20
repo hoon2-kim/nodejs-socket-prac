@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Socket IO</title>
+    </head>
+    <body>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            const socket = io(); // 클라이언트 소켓
+            // connect : 소켓이 성공적으로 연결되었을 때
+            socket.on('connect', () => {
+                // console.log(`a new user connected with id ${socket.id}`);
+                socket.emit('message', 'Hey server'); // emit을 통해 서버에 message 이벤트와 메시지 전송
+
+                socket.on('message', (msg) => console.log(msg)); // 서버로 부터 받으면
+            });
+        </script>
+    </body>
+</html>
