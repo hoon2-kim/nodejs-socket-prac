@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Mood Tracker</title>
+        <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    </head>
+    <body>
+        <button id="btn">Update Items</button>
+        <script>
+            const socket = io();
+            // const btn = document.getElementById('btn');
+            // socket.on('connect', () => {
+            //     btn.onclick = () => {
+            //         socket.emit(
+            //             'update items',
+            //             '1',
+            //             { name: 'updated' },
+            //             (ack) => {
+            //                 console.log(ack);
+            //             }
+            //         );
+            //     };
+            // });
+
+            // ack 제한(일정 시간 내에 받지 못하게되면 타임아웃 에러나게)
+            socket.on('connect', () => {
+                socket.timeout(3000).emit('my-event', (err, res) => {
+                    // 콜백으로 에러와 응답을 받을 수 있음
+                    if (err) {
+                        console.log('Not Acknowledged');
+                    } else {
+                        console.log(res);
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
