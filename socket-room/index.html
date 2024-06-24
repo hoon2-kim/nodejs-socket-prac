@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Socket IO</title>
+    </head>
+    <body>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            const socket = io();
+            socket.on('connect', () => {
+                const course = prompt('Which course you are enrolled in?');
+                console.log(socket.id);
+                switch (course) {
+                    case 'programming':
+                        socket.emit('join programming');
+                        break;
+                    case 'data structures':
+                        socket.emit('join data structures');
+                        break;
+                    case 'networks':
+                        socket.emit('join networks');
+                        break;
+                }
+            });
+        </script>
+    </body>
+</html>
