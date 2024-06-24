@@ -26,6 +26,6 @@ io.on('connection', (socket) => {
     });
 });
 
-httpServer.listen(port, () => {
+server.listen(port, () => {
     console.log(`listening on port ${port}`);
 });
