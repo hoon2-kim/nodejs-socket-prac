@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title></title>
+        <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    </head>
+    <body>
+        <button id="btn">My event</button>
+        <button id="stop">Stop my event</button>
+        <script>
+            const socket = io();
+            // socket.on('connect', () => {
+            //     socket.emit('one time event');
+            //     socket.emit('one time event');
+            //     socket.emit('one time event');
+            // });
+
+            // --
+
+            const btn = document.getElementById('btn');
+            const stop = document.getElementById('stop');
+            socket.on('connect', () => {
+                socket.onAnyOutgoing((event, ...args) => {
+                    // 나가는 모든 이벤트 감지
+                    console.log(`Emitting event: ${event} args are ${args}`);
+                });
+                btn.onclick = () => {
+                    socket.emit('my event', 'Noor', 'Socket IO');
+                };
+                stop.onclick = () => {
+                    socket.emit('stop my event');
+                };
+            });
+        </script>
+    </body>
+</html>
