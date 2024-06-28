@@ -75,6 +75,7 @@ socket.on('connect', () => {
             // 개인메시지
             const privateMsgs = document.getElementById('privateMsgs');
             sendMsgBtn.onclick = () => {
+                // 이미 대화 중인지 확인
                 if (!usersTalkingPrivately[id]) {
                     usersTalkingPrivately[id] = nickName;
                     const privMsgArea = document.createElement('ul');
@@ -91,18 +92,19 @@ socket.on('connect', () => {
                     privMsgArea.appendChild(sendBtn); // 전송 버튼을 개인 메시지 영역에 추가
                     privateMsgs.appendChild(privMsgArea); // 개인 메시지 영역을 전체 메시지 컨테이너에 추가
 
+                    // 첫 메시지 이후로 주고받을 때는 send버튼을 누르기 때문에 위의 if문은 상관이없다.
                     sendBtn.onclick = (e) => {
                         e.preventDefault();
                         const msg = input.value;
                         socket.emit(
                             'sendPrivateMsg',
-                            socket.id,
-                            id,
-                            socket.nickName,
+                            socket.id, // 나(socket.id)
+                            id, // 상대(socket.id)
+                            socket.nickName, // 상대 닉네임
                             msg
                         );
                         const msgArea = document.getElementById(id);
-                        messaging(msgArea, 'ME: ', msg);
+                        messaging(msgArea, 'ME', msg);
                         input.value = '';
                     };
                 } else {
@@ -112,7 +114,44 @@ socket.on('connect', () => {
         }
     });
 
-    socket.on('recPrivateMsg', (senderId, senderName, msg) => {});
+    socket.on('recPrivateMsg', (senderId, senderName, msg) => {
+        // 개인 메시지 받은 사람이 처음 받는다면
+        if (!usersTalkingPrivately[senderId]) {
+            usersTalkingPrivately[senderId] = senderName;
+            const privMsgArea = document.createElement('ul');
+            privMsgArea.id = senderId;
+            privMsgArea.classList.add('privMsg');
+            const privHeading = document.createElement('h1');
+            const input = document.createElement('input');
+            const sendBtn = document.createElement('button');
+            sendBtn.type = 'submit';
+            sendBtn.innerText = 'send';
+            privHeading.innerText = `Private messages between you and ${senderName}`;
+            privMsgArea.appendChild(privHeading);
+            privMsgArea.appendChild(input);
+            privMsgArea.appendChild(sendBtn);
+            privateMsgs.appendChild(privMsgArea);
+            messaging(privMsgArea, senderName, msg);
+
+            sendBtn.onclick = (e) => {
+                e.preventDefault();
+                const msg = input.value;
+                const msgArea = document.getElementById(senderId);
+                messaging(msgArea, 'ME', msg);
+                socket.emit(
+                    'sendPrivateMsg',
+                    socket.id,
+                    senderId,
+                    socket.nickName,
+                    msg
+                );
+                input.value = '';
+            };
+        } else {
+            const msgArea = document.getElementById(senderId);
+            messaging(msgArea, senderName, msg);
+        }
+    });
 
     socket.on('userIsTyping', (nickName) => {
         const typing = document.getElementById('typingStatus');
