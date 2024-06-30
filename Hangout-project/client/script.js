@@ -167,3 +167,10 @@ socket.on('connect', () => {
         alert(`${userNickName} Has left the Chat`);
     });
 });
+
+const createGrpBtn = document.getElementById('createGrp');
+createGrpBtn.onclick = () => {
+    const grpName = prompt('What is the group name?');
+    const url = `/privGroup/${grpName}`;
+    window.open(url, '_blank');
+};
